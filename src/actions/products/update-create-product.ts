@@ -15,17 +15,44 @@ export const updateCreateProduct = (product: Partial<Product>) => {
   return createProduct(product);
 };
 
-const prepareImages = (images: string[]) => {
+const prepareImages = async (images: string[]) => {
   //Todo: revisar los FILES
+  const fileImages = images.filter(image => image.includes('file://'));
+  const currentImages = images.filter(image => !image.includes('file://'));
 
-  return images.map(image => image.split('/').pop());
+  if (fileImages.length > 0) {
+    const uploadPromises = fileImages.map(uploadImage);
+    const uploadedImages = await Promise.all(uploadPromises);
+    currentImages.push(...uploadedImages);
+  }
+  return currentImages.map(image => image.split('/').pop());
+};
+
+const uploadImage = async (image: string) => {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: image,
+    type: 'image/jpeg',
+    name: image.split('/').pop(),
+  });
+
+  const {data} = await testloApi.post<{image: string}>(
+    '/files/product',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+  return data.image;
 };
 
 //Todo: Revisar si viene el usuario
 const updateProduct = async (product: Partial<Product>) => {
   const {id, images = [], ...rest} = product;
   try {
-    const checkedImages = prepareImages(images);
+    const checkedImages = await prepareImages(images);
 
     const {data} = await testloApi.patch(`/products/${id}`, {
       images: checkedImages,
@@ -44,7 +71,7 @@ const updateProduct = async (product: Partial<Product>) => {
 const createProduct = async (product: Partial<Product>) => {
   const {id, images = [], ...rest} = product;
   try {
-    const checkedImages = prepareImages(images);
+    const checkedImages = await prepareImages(images);
     const {data} = await testloApi.post('/products/', {
       images: checkedImages,
       ...rest,
