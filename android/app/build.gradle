@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.productsapp"
+    namespace "com.glendy.productsapp"
     defaultConfig {
-        applicationId "com.productsapp"
+        applicationId "com.glendy.productsapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
