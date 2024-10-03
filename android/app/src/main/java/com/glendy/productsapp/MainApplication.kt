@@ -1,4 +1,4 @@
-package com.productsapp
+package com.glendy.productsapp
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -1,4 +1,4 @@
-package com.productsapp
+package com.glendy.productsapp
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity
